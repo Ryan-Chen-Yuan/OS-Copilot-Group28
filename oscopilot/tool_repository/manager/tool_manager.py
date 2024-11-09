@@ -5,6 +5,7 @@
 from langchain.vectorstores import Chroma
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain_community.embeddings import OllamaEmbeddings
+from langchain_community.embeddings import VolcanoEmbeddings
 import argparse
 import json
 import sys
@@ -17,6 +18,9 @@ OPENAI_ORGANIZATION = os.getenv('OPENAI_ORGANIZATION')
 
 EMBED_MODEL_TYPE = os.getenv('MODEL_TYPE')
 EMBED_MODEL_NAME = os.getenv('MODEL_NAME')
+
+VOLC_ACCESSKEY = os.getenv('VOLC_ACCESSKEY')
+VOLC_SECRETKEY = os.getenv('VOLC_SECRETKEY')
 
 class ToolManager:
     """
@@ -71,7 +75,11 @@ class ToolManager:
             )
         elif EMBED_MODEL_TYPE == "OLLAMA":
             embedding_function = OllamaEmbeddings(model=EMBED_MODEL_NAME)
-        
+        elif EMBED_MODEL_TYPE == "ARK":
+            embedding_function = VolcanoEmbeddings(
+                volcano_ak=VOLC_ACCESSKEY, 
+                volcano_sk=VOLC_SECRETKEY,
+            )
         self.vectordb = Chroma(
             collection_name="tool_vectordb",
             embedding_function=embedding_function,

@@ -5,18 +5,35 @@ import time
 import requests
 import json
 from dotenv import load_dotenv
-
+from volcenginesdkarkruntime import Ark
 
 load_dotenv(override=True)
 MODEL_NAME = os.getenv('MODEL_NAME')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 OPENAI_ORGANIZATION = os.getenv('OPENAI_ORGANIZATION')
 BASE_URL = os.getenv('OPENAI_BASE_URL')
+ARK_API_KEY = os.getenv('ARK_API_KEY')
+ARK_MODEL_ID = os.getenv('ARK_MODEL_ID')
 
 # add
 MODEL_SERVER = os.getenv('MODEL_SERVER')
 
+# volcengine.com/docs/82379/1302008
+class ARK:
+    def __init__(self):
+        self.model_id = ARK_MODEL_ID
+        self.api_key = ARK_API_KEY
 
+    def chat(self, messages):
+        client = Ark(api_key= self.api_key)
+        completion = client.chat.completions.create(
+            model=self.model_id,
+            messages=messages,
+        )
+
+        logging.info(f"Response: {completion.choices[0].message.content}")
+
+        return completion.choices[0].message.content
 class OpenAI:
     """
     A class for interacting with the OpenAI API, allowing for chat completion requests.
@@ -38,7 +55,7 @@ class OpenAI:
         """
         Initializes the OpenAI object with the given configuration.
         """
-
+        
         self.model_name = MODEL_NAME
 
     def chat(self, messages, temperature=0, prefix=""):
