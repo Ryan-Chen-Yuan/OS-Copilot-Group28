@@ -2,8 +2,8 @@
 # import sys
 # sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-from langchain.vectorstores import Chroma
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
 from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.embeddings import VolcanoEmbeddings
 import argparse
@@ -15,7 +15,8 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path='.env', override=True)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 OPENAI_ORGANIZATION = os.getenv('OPENAI_ORGANIZATION')
-
+OPENAI_EMBED_BASE_URL = os.getenv('OPENAI_EMBED_BASE_URL')
+OPENAI_EMBED_API_KEY = os.getenv('OPENAI_EMBED_API_KEY')
 EMBED_MODEL_TYPE = os.getenv('MODEL_TYPE')
 EMBED_MODEL_NAME = os.getenv('MODEL_NAME')
 
@@ -70,8 +71,9 @@ class ToolManager:
         
         if EMBED_MODEL_TYPE == "OpenAI":
             embedding_function = OpenAIEmbeddings(
-                openai_api_key=OPENAI_API_KEY,
+                openai_api_key=OPENAI_EMBED_API_KEY,
                 openai_organization=OPENAI_ORGANIZATION,
+                base_url=OPENAI_EMBED_BASE_URL
             )
         elif EMBED_MODEL_TYPE == "OLLAMA":
             embedding_function = OllamaEmbeddings(model=EMBED_MODEL_NAME)
@@ -211,7 +213,7 @@ class ToolManager:
             fb.write(program_description)
         with open(f"{self.generated_tool_repo_dir}/generated_tools.json", "w") as fc:
             json.dump(self.generated_tools,fc,indent=4)
-        self.vectordb.persist()
+        # self.vectordb.persist()
         # with open(f"{self.generated_tool_repo_dir}/generated_tools.json") as f2:
         #     self.generated_tools = json.load(f2)
 

@@ -4,6 +4,7 @@ import { styled } from "@mui/joy/styles";
 import Card from "@mui/joy/Card";
 import Chip from "@mui/joy/Chip"
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
+import AttachFileIcon from "@mui/icons-material/AttachFile"
 import PackedMarkdown from "../components/Markdown";
 
 const PaddingDivision = styled('div')(({ theme }) => ({
@@ -27,6 +28,42 @@ const Bubble = (props) => {
     attached
   } = props;
 
+  const openFileOrFolder = (filePath) => {
+    if (!filePath) return;
+
+    // Get required modules
+    const { shell } = window.require('electron');
+    const fs = window.require('fs');
+    const path = window.require('path');
+
+    // Resolve to absolute path
+    const absolutePath = path.resolve(filePath);
+
+    // Check if path exists
+    if (!fs.existsSync(absolutePath)) {
+      console.error('Path does not exist:', absolutePath);
+      return;
+    }
+
+    // Open file/folder using electron shell
+    shell.openPath(absolutePath)
+      .then((error) => {
+        if (error) {
+          console.error('Error opening path:', error);
+          // Fallback to showing in folder if direct open fails
+          shell.showItemInFolder(absolutePath);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to open path:', err);
+      });
+  };
+
+  const handleAttachmentClick = () => {
+    if (attached) {
+      openFileOrFolder(attached);
+    }
+  };
   return (
     <PaddingDivision
       sx={(theme) => ({
@@ -49,7 +86,8 @@ const Bubble = (props) => {
         variant="soft"
       >
         {attached && <Chip
-          color="primary"
+          color="neutral"
+          onClick={handleAttachmentClick}
           sx={{
             "--Chip-radius": "0px",
             padding: 0.5,
@@ -59,7 +97,7 @@ const Bubble = (props) => {
             }
           }}
         >
-          <UploadFileOutlinedIcon sx={{ marginRight: 0.5 }} />
+          <AttachFileIcon sx={{ marginRight: 0.5 }} />
           {attached}
         </Chip>}
         <PackedMarkdown children={content} />
