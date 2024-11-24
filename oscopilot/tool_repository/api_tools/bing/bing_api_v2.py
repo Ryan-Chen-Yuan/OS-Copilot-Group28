@@ -5,8 +5,8 @@ from typing import Tuple
 from enum import Enum
 from .web_loader import WebPageLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
 from langchain.chains.summarize import load_summarize_chain
 from langchain import OpenAI
 

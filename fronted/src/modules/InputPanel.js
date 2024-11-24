@@ -12,6 +12,8 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import UploadFileOutlinedIcon from "@mui/icons-material/UploadFileOutlined";
 import { sendPrompts } from "../interface/api";
 
+/*import { sendPrompts } from "../src/interface/api";*/
+
 const Division = styled('div')(({ theme }) => ({
   padding: theme.spacing(1, 2, 2, 2),
   display: "flex",
@@ -117,7 +119,8 @@ function InputPanel(props) {
     if (savedPrompts.prompts.length === 0) {
       return;
     }
-
+    debugger;
+    console.log("useEffect");
     setDropFile(null);
     const filename = savedPrompts.file
       ? window.require
@@ -132,6 +135,7 @@ function InputPanel(props) {
       handleStepFin: handleStepFin
     })
       .then((_) => {
+        debugger;
         handleAddBanner("success", "Current task execution completed.");
       })
       .catch((err) => {

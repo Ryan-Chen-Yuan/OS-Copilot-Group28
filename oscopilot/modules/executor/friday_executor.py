@@ -3,6 +3,7 @@ from oscopilot.tool_repository.manager.tool_manager import get_open_api_doc_path
 import re
 import json
 import subprocess
+import logging
 from pathlib import Path
 from oscopilot.utils.utils import send_chat_prompts, api_exception_mechanism
 
@@ -122,6 +123,11 @@ class FridayExecutor(BaseModule):
         # state.pwd = self.environment.working_dir
         # state.ls = subprocess.run(['ls'], cwd=self.environment.working_dir, capture_output=True, text=True).stdout
         state = self.environment.step(node_type, code)  # node_type
+        path = state.ls.split()[0]
+        for ls in state.ls.split():
+            if "." in ls:
+                path = ls
+        logging.info(f"File at:{state.pwd}/{path}")
         print("************************<state>**************************")
         print(state)
         # print("error: " + state.error + "\nresult: " + state.result + "\npwd: " + state.pwd + "\nls: " + state.ls)
@@ -464,7 +470,8 @@ class FridayExecutor(BaseModule):
             lines = content.strip().splitlines()
             content = '\n'.join(lines)
             f.write(content)
-                 
+        
+        #logging.info(f"File at: executor path: {path}")
     def save_tool_info_to_json(self, tool, code, description):
         """
         Constructs a dictionary containing tool information suitable for JSON serialization.

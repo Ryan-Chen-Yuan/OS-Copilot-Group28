@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
 const { app, Menu, BrowserWindow } = require('electron');
 const path = require('path');
-const isDevMode = require('electron-is-dev');
+const isDevMode = true; /*require('electron-is-dev');*/
 
 function createWindow() {
   if (process.platform === 'darwin') {
@@ -71,3 +71,4 @@ app.on('window-all-closed', function () {
     app.quit();
   }
 })
+

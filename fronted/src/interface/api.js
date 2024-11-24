@@ -29,6 +29,7 @@ const sendPrompts = shuntSpawner(
   })
 )(
   (prompts, attachedFilePath, operators) => new Promise((resolve, reject) => {
+    debugger;
     const path = window.require("path");
     const fs = window.require("fs");
     const { exec } = window.require("child_process");
@@ -77,6 +78,7 @@ const sendPrompts = shuntSpawner(
     )
 
     let recordIndex = 0;
+    var filePath = "";
     const fingerprint = prefix;
     const timerID = setInterval(() => {
       const logFilePath = path.join(absolutePath, logDirectoryName, logFileName);
@@ -88,10 +90,15 @@ const sendPrompts = shuntSpawner(
       const newRecord = logRecord.slice(recordIndex);
       recordIndex = logRecord.length;
       newRecord.forEach((item) => {
-        const log = item.slice(33);
+        const log = item.trim().slice(33);
         const trimmed = log.split(":").slice(1).join(":").slice(1);
-        if (/^Overall Response: /.test(log)) {
+        //if (/^Overall Response: /.test(log)) {
+        if (/^Response: Reasoning:/.test(log.replace(/\r?\n/g, ''))) {
           handleAddBubble(false, trimmed);
+          handleAddStep(fingerprint);
+        } 
+        else if(/Reasoning:/.test(log) || /^Response: Let me break down/.test(log)){
+          handleAddBubble(false, log);
           handleAddStep(fingerprint);
         } else if (/^The current subtask is: /.test(log)) {
           handleStepNew(fingerprint, trimmed);
@@ -99,12 +106,14 @@ const sendPrompts = shuntSpawner(
           const result = JSON.parse(trimmed);
           handleStepFin(fingerprint, {
             color: result.error ? "danger" : "success",
-            content: (result.error || result.result).replaceAll(/<return>[^]+<\/return>/g, "")
+            content: (result.error || result.result ).replaceAll(/<return>[^]+<\/return>/g, "")
           })
-        }
+        } else if (/^File at:/.test(log)){
+          filePath = trimmed;
+        } 
       });
     }, 100);
-
+    
     const command = pythonCommand({
       HTTP_PROXY: proxyURL,
       HTTPS_PROXY: proxyURL,
@@ -121,6 +130,7 @@ const sendPrompts = shuntSpawner(
     console.log(command);
     exec(command, { cwd: absolutePath }, (err, stdout, stderr) => {
       clearInterval(timerID);
+      if (filePath !== "") { handleAddBubble(false, "Your file can be found here: " + filePath, filePath);}
       stderr
         ? reject({ type: "stderr", info: stderr })
         : err
@@ -132,5 +142,5 @@ const sendPrompts = shuntSpawner(
 
 export default sendPrompts;
 export {
-  sendPrompts,
+  sendPrompts
 };
