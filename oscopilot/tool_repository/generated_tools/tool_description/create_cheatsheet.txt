@@ -1,0 +1,1 @@
+Convert PDF files from the slides folder into a condensed Word document cheat sheet by removing special characters
