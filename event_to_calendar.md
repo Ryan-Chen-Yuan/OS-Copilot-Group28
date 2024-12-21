@@ -31,6 +31,9 @@ python oscopilot/tool_repository/manager/tool_manager.py --add --tool_name parse
 ## Output
 
 ``` txt
+working_dir
+├── images
+│   └── screenshot1.jpg
 └── output
     ├── image_event_example_output.jpg
     ├── image_event_example_procedure.txt
