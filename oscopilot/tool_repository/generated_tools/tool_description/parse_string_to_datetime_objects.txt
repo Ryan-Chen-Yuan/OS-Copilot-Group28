@@ -1,0 +1,1 @@
+Parse the input string to extract datetime objects for the start time and end time
