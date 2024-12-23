@@ -9,7 +9,7 @@ python quick_start.py
 ## Tools Setup
 
 ```bash
-python oscopilot/tool_repository/manager/tool_manager.py --add --tool_name create_cheat_sheet --tool_path oscopilot/tool_repository/basic_tools/create_cheat_sheet.py
+python oscopilot/tool_repository/manager/tool_manager.py --add --tool_name create_cheat_sheet --tool_path create_cheat_sheet.py
 ```
 
 ## Input
