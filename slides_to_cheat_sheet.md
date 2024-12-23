@@ -2,8 +2,6 @@
 
 ## Command line Example
 
-default(text):
-
 ```bash
 python quick_start.py
 ```
